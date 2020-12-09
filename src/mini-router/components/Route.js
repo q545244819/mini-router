@@ -20,18 +20,18 @@ function Route(props) {
       const data = {
         [HASH_MODE]: {
           match: {
-            path: hash2pathname(window.location.hash),
+            path: path,
             params: getParams(path, state.path),
             query: getQuery(window.location.hash),
-            url: window.location.url,
+            url: hash2pathname(window.location.search),
           },
         },
         [HISTORY_MODE]: {
           match: {
-            path: window.location.pathname,
+            path: path,
             params: getParams(path, state.path),
-            query: getQuery(window.location.hash),
-            url: window.location.url,
+            query: getQuery(window.location.search),
+            url: window.location.pathname,
           },
         },
       };
