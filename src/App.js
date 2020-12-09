@@ -1,23 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import { Switch, Route, Link } from "./mini-router";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>mini-router</h1>
+      <ul>
+        <li>
+          <Link to="/">/home</Link>
+        </li>
+        <li>
+          <Link to="/foo">/foo</Link>
+        </li>
+        <li>
+          <Link to="/bar">/bar</Link>
+        </li>
+      </ul>
+      <Switch>
+        <Route path="/" component={() => <div>Hello Home Page!</div>} />
+        <Route path="/:id" component={() => <div>Hello :id Page!</div>} />
+        <Route
+          path="/foo"
+          exact
+          component={({ history }) => (
+            <div>
+              <div>Hello Foo Page!</div>
+              <ul>
+                <li>
+                  <Link to="/foo/a">/foo/a</Link>
+                </li>
+                <li>
+                  <Link to="/foo/b">/foo/b</Link>
+                </li>
+              </ul>
+              <Switch>
+                <Route path="/foo/:id" component={() => <p>Foo :id Page!</p>} />
+                <Route
+                  path="/foo/b"
+                  exact
+                  component={() => (
+                    <p onClick={() => history.goBack()}>Foo B Page!</p>
+                  )}
+                />
+              </Switch>
+            </div>
+          )}
+        />
+        <Route path="/bar" component={() => <div>Hello Bar Page!</div>} />
+      </Switch>
     </div>
   );
 }
