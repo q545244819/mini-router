@@ -1,5 +1,6 @@
 import { HASH_MODE, HISTORY_MODE } from "./store/contants";
 
+// 将 window.location.hash 转换成 window.location.pathname 格式
 export function hash2pathname(hash) {
   if (typeof hash !== "string") {
     return "";
@@ -12,10 +13,12 @@ export function hash2pathname(hash) {
   return "";
 }
 
+// 判断是否为参数路径的参数占位符
 function isPathPlaceholder(path) {
   return path.length > 1 && path["0"] === ":";
 }
 
+// 匹配两个路径，支持参数路径匹配
 export function match(to, from) {
   if (typeof to !== "string" || typeof from !== "string") {
     return false;
@@ -37,6 +40,8 @@ export function match(to, from) {
   return true;
 }
 
+// 检查当前路径是否为目标路径的子路径，如 /foo/bar 是 /foo 的子路径
+// 嵌套（nesting）路由功能解决方案
 export function isChildrenPath(path, child) {
   if (typeof path !== "string" || typeof child !== "string") {
     return false;
@@ -51,6 +56,7 @@ export function isChildrenPath(path, child) {
   return child.startsWith(path);
 }
 
+// 根据实际路径和参数路径获取对应的参数对象
 export function getParams(to, from) {
   if (typeof to !== "string" || typeof from !== "string") {
     return {};
@@ -74,6 +80,7 @@ export function getParams(to, from) {
   return res;
 }
 
+// 获取路由参数对象
 export function getQuery(querystring) {
   if (querystring.indexOf("?") === -1) {
     return {};
@@ -94,6 +101,7 @@ export function getQuery(querystring) {
   return res;
 }
 
+// 控制浏览器标签页前进
 export function push(to, mode) {
   switch (mode) {
     case HASH_MODE:
@@ -113,6 +121,7 @@ function pushOfHistoryRouter(to) {
   window.history.pushState({}, "", to);
 }
 
+// 控制浏览器标签页后退
 export function goBack() {
   window.history.back();
 }
