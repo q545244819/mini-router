@@ -2,7 +2,7 @@ mini-router 是基于 React 的轻量前端路由组件库，目的是帮助大�
 
 ## 哈希（Hash）路由和原生（History）路由
 
-一般路由组件库中会提供两种路由模式，分别是：哈希路由和原生路由。哈希路由以`/#`作为路径（path）前缀，当哈希值改变后，浏览器标签页不会重新刷新网页内容。原生路由直接修改 url 中的路径（path），需要使用浏览器的 History API 控制路由，直接在浏览器地址栏中修改会导致当前标签页刷新网页内容。一般情况下，会根据项目的需求选择不同路由模式。
+一般路由库中会提供两种路由模式，分别是：哈希路由和原生路由。哈希路由以`/#`作为路径（path）前缀，当哈希值改变后，浏览器标签页不会重新刷新网页内容。原生路由直接修改 url 中的路径（path），需要使用浏览器的 History API 控制路由，直接在浏览器地址栏中修改会导致当前标签页刷新网页内容。一般情况下，会根据项目的需求选择不同路由模式。
 
 当哈希路由的哈希值发生变化时，事件`hashchange`会被触发，可以通过`window.location.hash`获取哈希值（当中包含当前路径信息），哈希路由器的功能就是依靠这两个 API。
 
@@ -98,7 +98,78 @@ function useRouterReducer() {
 export { reducer, useRouterReducer };
 ```
 
-以上就完成了 mini-router 的基本项目结构，接下来就来完善组件、数据层和 utils.js 的代码部分。
+以上就完成了 mini-router 的基本项目结构，接下来就来完善组件、数据层和 utils.js 的代码部分。为了方便读者测试，将 src/index.js 和 src/App.js 修改为如下代码。最后完成 mini-router 后运行项目就能看到我们所实现路由组件库的效果了。
+
+```JavaScript
+// src/index.js
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+import { HistoryRouter } from "./mini-router";
+
+ReactDOM.render(
+  <HistoryRouter>
+    <App />
+  </HistoryRouter>,
+  document.getElementById("root")
+);
+
+// src/App.js
+import { Switch, Route, Link } from "./mini-router";
+
+function App() {
+  return (
+    <div>
+      <h1>mini-router</h1>
+      <ul>
+        <li>
+          <Link to="/">/home</Link>
+        </li>
+        <li>
+          <Link to="/foo">/foo</Link>
+        </li>
+        <li>
+          <Link to="/bar">/bar</Link>
+        </li>
+      </ul>
+      <Switch>
+        <Route path="/" component={() => <div>Hello Home Page!</div>} />
+        <Route path="/:id" component={() => <div>Hello :id Page!</div>} />
+        <Route
+          path="/foo"
+          exact
+          component={({ history }) => (
+            <div>
+              <div>Hello Foo Page!</div>
+              <ul>
+                <li>
+                  <Link to="/foo/a">/foo/a</Link>
+                </li>
+                <li>
+                  <Link to="/foo/b">/foo/b</Link>
+                </li>
+              </ul>
+              <Switch>
+                <Route path="/foo/:id" component={() => <p>Foo :id Page!</p>} />
+                <Route
+                  path="/foo/b"
+                  exact
+                  component={() => (
+                    <p onClick={() => history.goBack()}>Foo B Page!</p>
+                  )}
+                />
+              </Switch>
+            </div>
+          )}
+        />
+        <Route path="/bar" component={() => <div>Hello Bar Page!</div>} />
+      </Switch>
+    </div>
+  );
+}
+
+export default App;
+```
 
 ## 数据层开发
 
@@ -186,7 +257,7 @@ export { routerContext };
 
 `<HashRouter>`组件具备两个副作用，一是修改 mode 为`HASH_MODE`，二是监听`hashchange`事件。是该组件的核心功能。当`hashchange`事件触发时，就会修改 routerState 的 path 属性，重新渲染路由组件。
 
-```
+```JavaScript
 import { useCallback, useEffect } from "react";
 import { routerContext } from "../store/context";
 import { useRouterReducer } from "../store";
@@ -226,7 +297,7 @@ function HashRouter(props) {
 
 `<HistoryRouter>`组件实现基本和`<HashRouter>`组件相同。不同的是，副作用函数中会修改 mode 为 HISTORY_MODE 和监听的是`popstate`事件。
 
-```
+```JavaScript
 function HistoryRouter(props) {
   const { children } = props;
   const [state, dispatch] = useRouterReducer();
@@ -270,7 +341,7 @@ function HistoryRouter(props) {
 
 > `goBack()`控制路由回退。
 
-```
+```JavaScript
 import { useCallback, useContext, useMemo } from "react";
 import { routerContext } from "../store/context";
 import {
@@ -343,7 +414,7 @@ export default Route;
 
 默认权重值（weight）为 0，只要负责其中一个规则，与权重值做与运算。待计算完所有的`<Route>`组件权限后，取出权限最高且权重不为 0 的`<Route>`组件渲染。若不存在则不渲染。
 
-```
+```JavaScript
 import { useContext } from "react";
 import { match, isChildrenPath } from "../utils";
 import { routerContext } from "../store/context";
@@ -389,7 +460,7 @@ export default Switch;
 
 `<Link>`组件实现比较简单，渲染 a 标记并且控制默认点击事件，将路由前进的逻辑替换成 push 方法。这里需要注意，使用 History API 的 pushstate 方法时，是无法触发 popstate 事件，所以这里需要手动通知修改 routerState 中 path 属性，才能够正确渲染。
 
-```
+```JavaScript
 import { useCallback, useContext } from "react";
 import { routerContext } from "../store/context";
 import { HISTORY_MODE } from "../store/contants";
@@ -430,7 +501,7 @@ export default Link;
 
 在实现组件和数据层时使用了不少 utils.js 提供的函数，这里把具体的代码实现。
 
-```
+```JavaScript
 import { HASH_MODE, HISTORY_MODE } from "./store/contants";
 
 // 将 window.location.hash 转换成 window.location.pathname 格式
