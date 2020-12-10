@@ -23,17 +23,3 @@ export function changeHistoryMode() {
     mode: actionTypes.HISTORY_MODE,
   };
 }
-
-export function addExactItem(data) {
-  return {
-    type: actionTypes.ADD_EXACT_ITEM,
-    data,
-  };
-}
-
-export function deleteExactItem(data) {
-  return {
-    type: actionTypes.DELETE_EXACT_ITEM,
-    data,
-  };
-}
