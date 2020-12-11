@@ -1,5 +1,6 @@
+import React from 'react';
 import { useCallback, useEffect } from "react";
-import { routerContext } from "../store/context";
+import { RouterContext } from "../store/context";
 import { useRouterReducer } from "../store";
 import {
   changePath,
@@ -9,13 +10,17 @@ import {
 import { hash2pathname } from "../utils";
 
 // 哈希路由器组件
-function HashRouter(props) {
+interface IHashRouterProps {
+  children: JSX.Element | JSX.Element[] | null
+}
+
+function HashRouter(props: IHashRouterProps) {
   const { children } = props;
   const [state, dispatch] = useRouterReducer();
 
   const handleHashChange = useCallback(() => {
     dispatch(changePath(hash2pathname(window.location.hash)));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(changeHashMode());
@@ -27,21 +32,25 @@ function HashRouter(props) {
   }, []);
 
   return (
-    <routerContext.Provider
+    <RouterContext.Provider
       value={{ routerState: state, routerDispatch: dispatch }}
     >
       {children}
-    </routerContext.Provider>
+    </RouterContext.Provider>
   );
 }
 
-function HistoryRouter(props) {
+interface IHistoryRouter {
+  children: JSX.Element | JSX.Element[] | null
+}
+
+function HistoryRouter(props: IHistoryRouter) {
   const { children } = props;
   const [state, dispatch] = useRouterReducer();
 
   const handlePopstate = useCallback(() => {
     dispatch(changePath(window.location.pathname));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(changeHistoryMode());
@@ -53,11 +62,11 @@ function HistoryRouter(props) {
   }, []);
 
   return (
-    <routerContext.Provider
+    <RouterContext.Provider
       value={{ routerState: state, routerDispatch: dispatch }}
     >
       {children}
-    </routerContext.Provider>
+    </RouterContext.Provider>
   );
 }
 

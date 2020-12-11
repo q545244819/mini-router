@@ -1,3 +1,4 @@
+import React from "react";
 import { Switch, Route, Link } from "./mini-router";
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
         <Route
           path="/foo"
           exact
-          component={({ history }) => (
+          component={(props: any) => (
             <div>
               <div>Hello Foo Page!</div>
               <ul>
@@ -38,7 +39,7 @@ function App() {
                   path="/foo/b"
                   exact
                   component={() => (
-                    <p onClick={() => history.goBack()}>Foo B Page!</p>
+                    <p onClick={() => props.history.goBack()}>Foo B Page!</p>
                   )}
                 />
               </Switch>
