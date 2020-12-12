@@ -34,7 +34,7 @@ export interface IHistoryProps {
 function Route(props: IRouteProps) {
   const { path, component: Component } = props;
   const routerContext = useContext(RouterContext);
-  const state = routerContext?.routerState;
+  const state = routerContext?.routerState!;
 
   const getMatchPropsByMode = useCallback(
     (mode: string): IMatch => {
@@ -42,7 +42,7 @@ function Route(props: IRouteProps) {
         [HASH_MODE]: {
           match: {
             path: path,
-            params: getParams(path, state ? state.path : ""),
+            params: getParams(path, state.path),
             query: getQuery(window.location.hash),
             url: hash2pathname(window.location.search),
           },
@@ -50,7 +50,7 @@ function Route(props: IRouteProps) {
         [HISTORY_MODE]: {
           match: {
             path: path,
-            params: getParams(path, state ? state.path : ""),
+            params: getParams(path, state.path),
             query: getQuery(window.location.search),
             url: window.location.pathname,
           },
@@ -62,12 +62,12 @@ function Route(props: IRouteProps) {
     [path, state]
   );
 
-  const matched = match(path, state ? state.path : "");
-  const isChildren = isChildrenPath(path, state ? state.path : "");
-  const matchProps = getMatchPropsByMode(state ? state.mode : "");
+  const matched = match(path, state.path);
+  const isChildren = isChildrenPath(path, state.path);
+  const matchProps = getMatchPropsByMode(state.mode);
   const historyProps: IHistoryProps = {
     history: {
-      push: (to: string) => push(to, state ? state.mode : ""),
+      push: (to: string) => push(to, state.mode),
       goBack: () => goBack(),
     },
   };

@@ -20,8 +20,8 @@ enum Weight {
 function Switch(props: ISwitchProps) {
   const { children } = props;
   const routerContext = useContext(RouterContext);
-  const state = routerContext?.routerState;
-  const path = state ? state.path : "";
+  const state = routerContext?.routerState!;
+  const path = state.path;
 
   let route: JSX.Element | null = null;
   let routes: IRoutes[] | null = null;
