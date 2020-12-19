@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, ReactChildren, ReactElement } from "react";
 import { useCallback, useContext } from "react";
 import { RouterContext } from "../store/context";
 import { HISTORY_MODE } from "../store/contants";
@@ -8,11 +8,10 @@ import { push } from "../utils";
 // 用于控制路由之间跳转的组件
 interface ILinkProps {
   to: string;
-  children: any;
+  children: ReactChildren | string | null;
 }
 
-function Link(props: ILinkProps) {
-  const { to, children } = props;
+const Link: FC<ILinkProps> = ({ to, children }): ReactElement => {
   const routerContext = useContext(RouterContext);
   const state = routerContext?.routerState!;
   const dispatch = routerContext?.routerDispatch!;
@@ -35,6 +34,6 @@ function Link(props: ILinkProps) {
       {children}
     </a>
   );
-}
+};
 
 export default Link;

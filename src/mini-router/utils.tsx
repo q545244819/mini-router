@@ -1,4 +1,5 @@
 import { HASH_MODE, HISTORY_MODE } from "./store/contants";
+import { IPushFn, IGoBack } from "./types";
 
 // 将 window.location.hash 转换成 window.location.pathname 格式
 export function hash2pathname(hash: string): string {
@@ -111,9 +112,6 @@ export function getQuery(querystring: string): IQuery {
 }
 
 // 控制浏览器标签页前进
-export interface IPushFn {
-  (to: string, mode: string): void;
-}
 const push: IPushFn = (to, mode) => {
   switch (mode) {
     case HASH_MODE:
@@ -134,9 +132,6 @@ function pushOfHistoryRouter(to: string) {
 }
 
 // 控制浏览器标签页后退
-export interface IGoBack {
-  (): void;
-}
 const goBack: IGoBack = () => {
   window.history.back();
 };

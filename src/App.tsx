@@ -1,7 +1,18 @@
-import React from "react";
+import React, { FC, ReactElement } from "react";
 import { Switch, Route, Link } from "./mini-router";
 
-function App() {
+const Home: FC = (): ReactElement => <div>Hello Home Page!</div>;
+const IdPage: FC = (): ReactElement => <div>Hello :id Page!</div>;
+const Foo: FC = (): ReactElement => {
+  return (
+    <div>
+      <div>Hello Foo Page!</div>
+    </div>
+  );
+};
+const Bar: FC = (): ReactElement => <div>Hello Bar Page!</div>;
+
+function App(): ReactElement {
   return (
     <div>
       <h1>mini-router</h1>
@@ -17,36 +28,10 @@ function App() {
         </li>
       </ul>
       <Switch>
-        <Route path="/" component={() => <div>Hello Home Page!</div>} />
-        <Route path="/:id" component={() => <div>Hello :id Page!</div>} />
-        <Route
-          path="/foo"
-          exact
-          component={(props: any) => (
-            <div>
-              <div>Hello Foo Page!</div>
-              <ul>
-                <li>
-                  <Link to="/foo/a">/foo/a</Link>
-                </li>
-                <li>
-                  <Link to="/foo/b">/foo/b</Link>
-                </li>
-              </ul>
-              <Switch>
-                <Route path="/foo/:id" component={() => <p>Foo :id Page!</p>} />
-                <Route
-                  path="/foo/b"
-                  exact
-                  component={() => (
-                    <p onClick={() => props.history.goBack()}>Foo B Page!</p>
-                  )}
-                />
-              </Switch>
-            </div>
-          )}
-        />
-        <Route path="/bar" component={() => <div>Hello Bar Page!</div>} />
+        <Route path="/" component={Home} />
+        <Route path="/:id" component={IdPage} />
+        <Route path="/foo" exact component={Foo} />
+        <Route path="/bar" component={Bar} />
       </Switch>
     </div>
   );

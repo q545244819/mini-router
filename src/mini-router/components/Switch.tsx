@@ -1,13 +1,13 @@
-import { useContext } from "react";
+import { FC, ReactElement, useContext } from "react";
 import { match, isChildrenPath } from "../utils";
 import { RouterContext } from "../store/context";
 
 // 用于控制 Route 组件展示，类同编程语言 switch case 语法
 interface ISwitchProps {
-  children: JSX.Element | JSX.Element[] | null;
+  children: ReactElement[];
 }
 interface IRoutes {
-  route: JSX.Element;
+  route: any;
   weight: number;
 }
 enum Weight {
@@ -17,18 +17,17 @@ enum Weight {
   isChildren = 1,
 }
 
-function Switch(props: ISwitchProps) {
-  const { children } = props;
+const Switch: FC<ISwitchProps> = ({ children }): ReactElement | null => {
   const routerContext = useContext(RouterContext);
   const state = routerContext?.routerState!;
   const path = state.path;
 
-  let route: JSX.Element | null = null;
+  let route: any | null = null;
   let routes: IRoutes[] | null = null;
 
   if (Array.isArray(children) && children.length) {
     routes = children.map(
-      (route: JSX.Element): IRoutes => {
+      (route): IRoutes => {
         let weight = Weight.Default;
         if (route.props.exact && route.props.path === path) {
           weight |= Weight.Exact;
@@ -51,6 +50,6 @@ function Switch(props: ISwitchProps) {
   }
 
   return route;
-}
+};
 
 export default Switch;

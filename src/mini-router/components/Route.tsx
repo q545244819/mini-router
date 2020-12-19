@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, ReactElement } from "react";
 import { useCallback, useContext, useMemo } from "react";
 import { RouterContext } from "../store/context";
 import {
@@ -9,30 +9,20 @@ import {
   getQuery,
 } from "../utils";
 import { HASH_MODE, HISTORY_MODE } from "../store/contants";
-import { push, goBack, IPushFn, IGoBack } from "../utils";
+import { push, goBack } from "../utils";
+import { IMatch, IHistoryProps } from "../types";
 
 // 用于展示对应路由的视图
-export interface IRouteProps {
+interface IRouteProps {
   path: string;
-  component: any;
+  component: FC<any>;
   exact?: boolean;
 }
-export interface IMatch {
-  path: string;
-  params: string;
-  query: string;
-  url: string;
-}
-export interface IHistory {
-  push: IPushFn;
-  goBack: IGoBack;
-}
-export interface IHistoryProps {
-  history: IHistory;
-}
 
-function Route(props: IRouteProps) {
-  const { path, component: Component } = props;
+const Route: FC<IRouteProps> = ({
+  path,
+  component: Component,
+}): ReactElement | null => {
   const routerContext = useContext(RouterContext);
   const state = routerContext?.routerState!;
 
@@ -72,12 +62,12 @@ function Route(props: IRouteProps) {
     },
   };
 
-  const hoc = useMemo(() => {
+  const hoc = useMemo((): ReactElement => {
     return <Component {...matchProps} {...historyProps} />;
     // eslint-disable-next-line
   }, [matchProps]);
 
   return matched || isChildren ? hoc : null;
-}
+};
 
 export default Route;

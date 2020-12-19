@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, ReactChildren, ReactElement } from "react";
 import { useCallback, useEffect } from "react";
 import { RouterContext } from "../store/context";
 import { useRouterReducer } from "../store";
@@ -11,11 +11,10 @@ import { hash2pathname } from "../utils";
 
 // 哈希路由器组件
 interface IHashRouterProps {
-  children: JSX.Element | JSX.Element[] | null
+  children: ReactElement;
 }
 
-function HashRouter(props: IHashRouterProps) {
-  const { children } = props;
+const HashRouter: FC<IHashRouterProps> = ({ children }): ReactElement => {
   const [state, dispatch] = useRouterReducer();
 
   const handleHashChange = useCallback(() => {
@@ -38,14 +37,13 @@ function HashRouter(props: IHashRouterProps) {
       {children}
     </RouterContext.Provider>
   );
-}
+};
 
 interface IHistoryRouter {
-  children: JSX.Element | JSX.Element[] | null
+  children: ReactElement;
 }
 
-function HistoryRouter(props: IHistoryRouter) {
-  const { children } = props;
+const HistoryRouter: FC<IHistoryRouter> = ({ children }): ReactElement => {
   const [state, dispatch] = useRouterReducer();
 
   const handlePopstate = useCallback(() => {
@@ -68,6 +66,6 @@ function HistoryRouter(props: IHistoryRouter) {
       {children}
     </RouterContext.Provider>
   );
-}
+};
 
 export { HashRouter, HistoryRouter };
